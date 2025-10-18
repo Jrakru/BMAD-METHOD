@@ -1,0 +1,34 @@
+model {
+  // D5 — example
+  domain customer_data 'Customer Data'
+
+  product bronze_customers 'Bronze Customers' { #bronze }
+  product silver_customers 'Silver Customers' { #silver }
+
+  dataflow customer_ingest_v1 'Flow: customer_ingest.v1' {
+    metadata { id 'D2.customer_ingest.v1'; mode 'batch'; sla 'PT30M'; owner 'data@org' }
+
+    group wanLoad {
+      stage READ_CSV 'READ_CSV' { metadata { intent 'read' } }
+    }
+
+    group wanStandardize {
+      stage NORMALIZE_NAMES 'NORMALIZE_NAMES' {
+        metadata { intent 'map' }
+        directive OP_TRIM_UPPER 'OP.NAMES.TRIM_UPPER' {
+          metadata { op 'map'; expr 'first=upper(strip(first)); last=upper(strip(last))' }
+        }
+      }
+    }
+
+    wanStandardize.NORMALIZE_NAMES -[writes_to]-> silver_customers
+  }
+
+  // A small story demonstrating an end-to-end path
+  story checkout 'Checkout – happy path' {
+    step s1 'Client → API'    { hops platform.orchestrator }
+    step s2 'Normalize names' { hops customer_ingest_v1.wanStandardize.NORMALIZE_NAMES }
+    step s3 'Write silver'    { hops silver_customers }
+    s1 -[follows]-> s2; s2 -[follows]-> s3
+  }
+}

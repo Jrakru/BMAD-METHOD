@@ -1,0 +1,46 @@
+name: validate-likec4
+description: "Execute LikeC4 CLI validation against the 1C4D5 model assets and produce a detailed report with remediation guidance."
+author: "BMAD Architecture Team"
+
+# Critical variables from config
+config_source: "{project-root}/bmad/bmm/config.yaml"
+project_name: "{config_source}:project_name"
+output_folder: "{config_source}:output_folder"
+user_name: "{config_source}:user_name"
+communication_language: "{config_source}:communication_language"
+date: system-generated
+
+# Workflow components
+installed_path: "{project-root}/bmad/bmm/workflows/1c4d5/validate-likec4"
+instructions: "{installed_path}/instructions.md"
+validation: "{installed_path}/checklist.md"
+
+variables:
+  architecture_workspace: "{config_source}:architecture_workspace"
+  c4d5_reference: "{config_source}:c4d5_reference_library"
+  likec4_model_dir: "{architecture_workspace}/likec4/model"
+  likec4_views_file: "{architecture_workspace}/likec4/views/views.c4"
+  validation_output_dir: "{output_folder}/1c4d5"
+  validation_script: "{project-root}/scripts/run_likec4_validation.sh"
+
+default_output_file: "{validation_output_dir}/validation-report-{{date}}.md"
+
+required_tools:
+  - shell_command
+  - read_file
+  - write_file
+
+tags:
+  - architecture
+  - validation
+  - likec4
+  - c4
+  - d5
+  - bmad-v6
+
+execution_hints:
+  interactive: true
+  autonomous: false
+  iterative: true
+
+web_bundle: false

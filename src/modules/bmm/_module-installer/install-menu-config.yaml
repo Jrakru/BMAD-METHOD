@@ -43,21 +43,41 @@ dev_story_location:
   prompt: "Where should development stories be stored?"
   default: "docs/stories"
   result: "{project-root}/{value}"
-# kb_location:
-#   prompt: "Where should bmad knowledge base articles be stored?"
-#   default: "~/bmad/bmm/kb.md"
-#   result: "{value}"
+architecture_workspace_root:
+  prompt: "Where should architecture/diagram assets live?"
+  default: "1C4D5"
+  result: "{project-root}/{value}"
 
-# desired_mcp_tools:
-#   prompt:
-#     - "Which MCP Tools will you be using? (Select all that apply)"
-#     - "Note: You will need to install these separately. Bindings will come post ALPHA along with other choices."
-#   result: "{value}"
-#   multi-select:
-#     - "Chrome Official MCP"
-#     - "Playwright"
-#     - "Context 7"
-#     - "Tavily"
-#     - "Perplexity"
-#     - "Jira"
-#     - "Trello"
+architecture_starter_pack_dir:
+  prompt: "If you use a starter pack, where is it located?"
+  default: "1C4D5/1C4D5-Starter-Pack"
+  result: "{project-root}/{value}"
+
+runtime_dir:
+  prompt: "What is the canonical runtime directory for implementation code?"
+  default: "src"
+  result: "{project-root}/{value}"
+
+tests_dir:
+  prompt: "Where do the automated tests live?"
+  default: "tests"
+  result: "{project-root}/{value}"
+
+kb_location:
+  prompt: "Where should bmad knowledge base articles be stored?"
+  default: "~/bmad/bmm/kb.md"
+  result: "{value}"
+
+desired_mcp_tools:
+  prompt:
+    - "Which MCP Tools will you be using? (Select all that apply)"
+    - "Note: You will need to install these separately. Bindings will come post ALPHA along with other choices."
+  result: "{value}"
+  multi-select:
+    - "Chrome Official MCP"
+    - "Playwright"
+    - "Context 7"
+    - "Tavily"
+    - "Perplexity"
+    - "Jira"
+    - "Trello"

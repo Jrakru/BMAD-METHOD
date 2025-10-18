@@ -1,0 +1,25 @@
+specification {
+  // ---- C4 kinds
+  element system; element container; element component; element person; element boundary; element deployment;
+
+  // ---- D5 kinds
+  element domain; element product; element dataflow; element group; element stage; element directive; element detail_code; element actor;
+
+  // ---- Bridges
+  relationship exec_on;      // D3.stage -> C4.container|component
+  relationship owned_by;     // D1.product -> C4.component
+  relationship exposes_iface;// C4.component -> D1.product
+  relationship trust_boundary;// C4.boundary <-> D0.domain
+
+  // ---- D5 IO + control
+  relationship reads_from;
+  relationship writes_to;
+  relationship controls;
+
+  // ---- Story overlay
+  element story; element step;
+  relationship follows; relationship hops; relationship goto;
+
+  // ---- Tags
+  tag bronze; tag silver; tag gold; tag pii_high; tag deprecated; tag critical;
+}

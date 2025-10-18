@@ -1,0 +1,49 @@
+name: audit-data-flow
+description: "Trace a specific data flow through the codebase using code_tools intelligence, compare it with the LikeC4 D-layer representation, and report discrepancies."
+author: "BMAD Architecture Team"
+
+# Critical variables from config
+config_source: "{project-root}/bmad/bmm/config.yaml"
+project_name: "{config_source}:project_name"
+output_folder: "{config_source}:output_folder"
+user_name: "{config_source}:user_name"
+communication_language: "{config_source}:communication_language"
+date: system-generated
+
+# Workflow components
+installed_path: "{project-root}/bmad/bmm/workflows/1c4d5/audit-data-flow"
+instructions: "{installed_path}/instructions.md"
+validation: "{installed_path}/checklist.md"
+
+variables:
+  architecture_workspace: "{config_source}:architecture_workspace"
+  c4d5_reference: "{config_source}:c4d5_reference_library"
+  likec4_model_dir: "{architecture_workspace}/likec4/model"
+  templates_dir: "{c4d5_reference}/templates"
+  audit_output_dir: "{output_folder}/1c4d5"
+  code_tools_script: "{project-root}/scripts/run_code_tools_summary.py"
+
+# Output configuration
+default_output_file: "{audit_output_dir}/data-flow-audit-{{date}}.md"
+
+required_tools:
+  - code_tools
+  - shell_command
+  - list_files
+  - read_file
+  - write_file
+
+tags:
+  - architecture
+  - data-flow
+  - c4
+  - d5
+  - validation
+  - bmad-v6
+
+execution_hints:
+  interactive: true
+  autonomous: false
+  iterative: true
+
+web_bundle: false

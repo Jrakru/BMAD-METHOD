@@ -1,0 +1,72 @@
+name: update-diagram
+description: "Guide the C4/D5 librarian through collecting change context, mapping real implementation details with code_tools, and updating LikeC4 diagram assets in the 1C4D5 workspace using starter-pack templates."
+author: "BMAD Architecture Team"
+
+# Critical variables from config
+config_source: "{project-root}/bmad/bmm/config.yaml"
+project_name: "{config_source}:project_name"
+output_folder: "{config_source}:output_folder"
+user_name: "{config_source}:user_name"
+communication_language: "{config_source}:communication_language"
+date: system-generated
+
+# Workflow components
+installed_path: "{project-root}/bmad/bmm/workflows/1c4d5/update-diagram"
+instructions: "{installed_path}/instructions.md"
+validation: "{installed_path}/checklist.md"
+
+# Recommended documentation references
+recommended_inputs:
+  - "{modeling_guidelines}"
+  - "{view_catalog}"
+  - "{troubleshooting}"
+
+variables:
+  # Project-specific documentation workspace (read/write)
+  architecture_workspace: "{config_source}:architecture_workspace"
+
+  # Reference library for templates and guidelines (readonly)
+  c4d5_reference: "{config_source}:c4d5_reference_library"
+
+  # Derived paths - PROJECT workspace
+  likec4_model_dir: "{architecture_workspace}/likec4/model"
+  likec4_views_file: "{architecture_workspace}/likec4/views/views.c4"
+  docs_dir: "{architecture_workspace}/docs"
+  change_log_file: "{docs_dir}/Change-Log.md"
+  journal_dir: "{docs_dir}/journal"
+  specification_file: "{architecture_workspace}/likec4/specification.c4"
+
+  # Derived paths - REFERENCE library
+  templates_dir: "{c4d5_reference}/templates"
+  journal_template: "{templates_dir}/docs/journal-entry.md.tmpl"
+  modeling_guidelines: "{c4d5_reference}/docs/Modeling-Guidelines.md"
+  view_catalog: "{c4d5_reference}/docs/View-Catalog.md"
+  troubleshooting: "{c4d5_reference}/docs/Troubleshooting.md"
+
+  # Other
+  code_tools_script: "{project-root}/scripts/run_code_tools_summary.py"
+
+# Output configuration
+default_output_file: "{journal_dir}/diagram-update-{{date}}.md"
+
+required_tools:
+  - code_tools
+  - shell_command
+  - list_files
+  - read_file
+  - write_file
+
+tags:
+  - architecture
+  - c4
+  - d5
+  - documentation
+  - diagram-update
+  - bmad-v6
+
+execution_hints:
+  interactive: true
+  autonomous: false
+  iterative: true
+
+web_bundle: false

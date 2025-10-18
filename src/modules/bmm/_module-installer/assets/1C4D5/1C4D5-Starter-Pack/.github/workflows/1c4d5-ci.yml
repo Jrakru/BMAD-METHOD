@@ -1,0 +1,30 @@
+name: 1C4D5 CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate 1C4D5 model
+        run: |
+          python3 scripts/validate.py
+      - name: Compute hashes
+        run: |
+          python3 scripts/compute_hashes.py
+      - name: Build story player
+        run: |
+          python3 scripts/build_story_player.py
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: 1c4d5-artifacts
+          path: dist/**

@@ -1,0 +1,12 @@
+model {
+  // C4 — example
+  system platform 'Platform' {
+    boundary dataplane 'Data Plane' {
+      container plugin_host 'Plugin Host'
+      container lakehouse 'Lakehouse Adapter'
+    }
+    container orchestrator 'Orchestrator'
+    component stdlib_names 'Stdlib: Names'
+    person analyst 'Analyst'
+  }
+}

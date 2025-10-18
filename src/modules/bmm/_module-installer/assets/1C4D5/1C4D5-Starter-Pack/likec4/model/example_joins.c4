@@ -1,0 +1,9 @@
+model {
+  // Joins (C4 <-> D5)
+  customer_ingest_v1.wanStandardize.NORMALIZE_NAMES -[exec_on]-> platform.dataplane.plugin_host
+  customer_ingest_v1.wanLoad.READ_CSV -[exec_on]-> platform.dataplane.plugin_host
+
+  silver_customers -[owned_by]-> platform.stdlib_names
+
+  platform -[trust_boundary]-> customer_data
+}

@@ -1,0 +1,8 @@
+// TEMPLATE: Story overlay
+model {
+  story {{story_id}} '{{story_title}}' {
+    step s1 '{{step1_title}}' { hops {{hop1}} }
+    step s2 '{{step2_title}}' { hops {{hop2}} }
+    s1 -[follows]-> s2
+  }
+}

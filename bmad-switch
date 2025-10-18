@@ -1,0 +1,155 @@
+#!/bin/bash
+
+################################################################################
+# Codex Project Switcher for BMAD
+# Simplified version with relative path detection
+################################################################################
+
+set -e
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+# Get BMAD-METHOD path (where this script lives)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BMAD_SOURCE="$SCRIPT_DIR"
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  🔄 CODEX PROJECT SWITCHER"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Check arguments
+if [ -z "$1" ]; then
+  echo -e "${RED}❌ Usage: $0 /path/to/project${NC}"
+  echo ""
+  echo "Examples:"
+  echo "  $0 ~/git/wanELF"
+  echo "  $0 ~/git/DeepAgents"
+  echo ""
+  exit 1
+fi
+
+TARGET_PROJECT="$1"
+TARGET_PROJECT="${TARGET_PROJECT/#\~/$HOME}"
+
+# Verify project exists
+if [ ! -d "$TARGET_PROJECT" ]; then
+  echo -e "${RED}❌ Error: Directory not found: $TARGET_PROJECT${NC}"
+  exit 1
+fi
+
+# Verify it's a BMAD project
+if [ ! -f "$TARGET_PROJECT/bmad/bmm/config.yaml" ]; then
+  echo -e "${RED}❌ Error: Not a BMAD project (no config found)${NC}"
+  echo "   Expected: $TARGET_PROJECT/bmad/bmm/config.yaml"
+  exit 1
+fi
+
+# Check Codex
+if [ ! -d "$HOME/.codex" ]; then
+  echo -e "${YELLOW}⚠️  Codex not installed (skipping rebuild)${NC}"
+  cd "$TARGET_PROJECT"
+  echo -e "${GREEN}✓ Changed directory to: $(pwd)${NC}"
+  exit 0
+fi
+
+# Get project info
+PROJECT_NAME=$(grep "project_name:" "$TARGET_PROJECT/bmad/bmm/config.yaml" | sed 's/project_name: *//' | tr -d '\r')
+
+echo -e "${BLUE}📂 Target:${NC} $TARGET_PROJECT"
+echo -e "${BLUE}📊 Project:${NC} $PROJECT_NAME"
+echo -e "${BLUE}🔧 BMAD:${NC} $BMAD_SOURCE"
+echo ""
+
+# Get modules from manifest
+MODULES="['bmm', 'bmb', 'cis']"
+if [ -f "$TARGET_PROJECT/bmad/_cfg/manifest.yaml" ]; then
+  INSTALLED=$(grep -A 10 "^modules:" "$TARGET_PROJECT/bmad/_cfg/manifest.yaml" | grep "^  - " | sed 's/^  - //' | tr '\n' ',' | sed 's/,$//')
+  if [ -n "$INSTALLED" ]; then
+    MODULES="['$(echo "$INSTALLED" | sed "s/,/', '/g")']"
+    echo -e "${CYAN}📦 Modules: $INSTALLED${NC}"
+  fi
+fi
+
+echo ""
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${CYAN}🔨 REBUILDING CODEX AGENTS${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+
+cd "$TARGET_PROJECT"
+
+node -e "
+const { CodexSetup } = require('$BMAD_SOURCE/tools/cli/installers/lib/ide/codex.js');
+const setup = new CodexSetup();
+
+(async () => {
+  try {
+    const result = await setup.setup(
+      '$TARGET_PROJECT',
+      '$TARGET_PROJECT/bmad',
+      {
+        codexMode: 'cli',
+        selectedModules: $MODULES
+      }
+    );
+
+    console.log('');
+    console.log('✅ Success!');
+    console.log('   Agents:', result.counts.agents);
+    console.log('   Workflows:', result.counts.workflows);
+
+  } catch (error) {
+    console.error('❌ Error:', error.message);
+    process.exit(1);
+  }
+})();
+" || {
+  echo ""
+  echo -e "${RED}❌ Failed to rebuild Codex agents${NC}"
+  exit 1
+}
+
+echo ""
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${CYAN}🔍 VERIFICATION${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+
+if [ -f "$HOME/.codex/prompts/bmad-bmm-agents-dev.md" ]; then
+  AGENT_PATH=$(grep -m1 "/home/.*/git/" "$HOME/.codex/prompts/bmad-bmm-agents-dev.md" 2>/dev/null | sed 's/.*\(\/home\/[^/]*\/git\/[^/]*\).*/\1/')
+
+  if [ -n "$AGENT_PATH" ]; then
+    echo -e "${BLUE}Agent path:${NC} $AGENT_PATH"
+
+    if [[ "$TARGET_PROJECT" == *"$(basename "$AGENT_PATH")"* ]]; then
+      echo -e "${GREEN}✓ Paths match!${NC}"
+    else
+      echo -e "${YELLOW}⚠️  Path mismatch (may need to re-run)${NC}"
+    fi
+  fi
+fi
+
+echo ""
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${CYAN}✨ NEXT STEPS${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "${GREEN}1.${NC} You're now in: ${BLUE}$(pwd)${NC}"
+echo -e "${GREEN}2.${NC} Restart Codex IDE completely"
+echo -e "${GREEN}3.${NC} Test: ${BLUE}@dev *workflow-status${NC}"
+echo -e "${GREEN}4.${NC} Should show: ${BLUE}Project: $PROJECT_NAME${NC}"
+echo ""
+echo -e "${YELLOW}⚠️  Remember to run this script when switching projects!${NC}"
+echo ""
+echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}✅ Switched to $PROJECT_NAME${NC}"
+echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""

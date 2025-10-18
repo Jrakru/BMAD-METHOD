@@ -1,0 +1,9 @@
+// TEMPLATE: Dataflow (D2)
+model {
+  dataflow {{flow_id}} '{{flow_title}}' {
+    metadata { id '{{flow_id}}'; mode '{{mode}}'; sla '{{sla}}'; owner '{{owner}}' }
+    group {{group_name}} {
+      stage {{stage_id}} '{{stage_title}}' { metadata { intent '{{intent}}' } }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+views {
+  // Data lens for a flow
+  view d5_dataflow__customer_ingest {
+    include customer_ingest_v1
+  }
+
+  // Infra lens scoped to that flow's executors
+  view c4_infra__customer_ingest {
+    include platform
+    // renderer should filter to containers that execute the selected flow's stages
+  }
+
+  // Container -> stages it runs (+ products touched)
+  view hybrid_container_to_stages__plugin_host {
+    include platform.dataplane.plugin_host
+    include customer_ingest_v1
+    // filter: exec_on | reads_from | writes_to
+  }
+
+  // Product -> owners -> lineage footprint (lineage would be Dx overlay later)
+  view hybrid_product_to_owners__silver_customers {
+    include silver_customers
+    include platform.stdlib_names
+    include customer_ingest_v1
+  }
+
+  // Story lens
+  view story__checkout {
+    include checkout
+  }
+}
