@@ -5,6 +5,8 @@
   <item>Story fields (asA/iWant/soThat) captured</item>
   <item>Acceptance criteria list matches story draft exactly (no invention)</item>
   <item>Tasks/subtasks captured as task list</item>
+  <item>Epic context spine verified (doc hashes up to date, refresh performed if needed)</item>
+  <item>Story marked consulted in epic context coverage checklist</item>
   <item>Relevant docs (5-15) included with path and snippets</item>
   <item>Relevant code references included with reason and line hints</item>
   <item>Interfaces/API contracts extracted if applicable</item>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<epic-context version="1.0">
+  <metadata>
+    <epicId>{{epicId}}</epicId>
+    <title>{{epicTitle}}</title>
+    <generatedAt>{{generatedAt}}</generatedAt>
+    <updatedAt>{{updatedAt}}</updatedAt>
+    <sourceCount>{{sourceCount}}</sourceCount>
+  </metadata>
+
+  <docIndex>
+{{#doc_index}}
+    <doc>
+      <path>{{path}}</path>
+      <sha256>{{sha256}}</sha256>
+      <mtime>{{mtime}}</mtime>
+    </doc>
+{{/doc_index}}
+  </docIndex>
+
+  <docs>
+{{#docs}}
+    <entry>
+      <path>{{path}}</path>
+      <section>{{section}}</section>
+      <snippet>{{snippet}}</snippet>
+    </entry>
+{{/docs}}
+  </docs>
+
+  <constraints>
+{{#constraints}}
+    <item>{{.}}</item>
+{{/constraints}}
+  </constraints>
+
+  <tests>
+    <standards>{{tests.standards}}</standards>
+    <locations>
+{{#tests.locations}}
+      <path>{{.}}</path>
+{{/tests.locations}}
+    </locations>
+    <sharedIdeas>
+{{#tests.shared_ideas}}
+      <idea>{{.}}</idea>
+{{/tests.shared_ideas}}
+    </sharedIdeas>
+  </tests>
+
+  <dependencies>
+{{#dependencies}}
+    <ecosystem name="{{ecosystem}}">
+{{#packages}}
+      <package name="{{name}}" version="{{version}}"/>
+{{/packages}}
+    </ecosystem>
+{{/dependencies}}
+  </dependencies>
+
+  <codeBaseline>
+{{#code_baseline}}
+    <artifact>
+      <path>{{path}}</path>
+      <symbol>{{symbol}}</symbol>
+      <reason>{{reason}}</reason>
+    </artifact>
+{{/code_baseline}}
+  </codeBaseline>
+
+  <coverage>
+{{#coverage}}
+    <story id="{{story_id}}" consulted="{{consulted}}" consultedAt="{{consulted_at}}">
+      <title>{{title}}</title>
+    </story>
+{{/coverage}}
+  </coverage>
+</epic-context>

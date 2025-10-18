@@ -6,12 +6,13 @@ Assembles a dynamic Story Context XML by pulling latest documentation and existi
 
 ## Key Features
 
-- **Automated Context Discovery** - Scans documentation and codebase for relevant artifacts
-- **XML Output Format** - Structured context optimized for LLM consumption
-- **Dependency Detection** - Identifies frameworks, packages, and technical dependencies
-- **Interface Mapping** - Locates existing APIs and interfaces to reuse
-- **Testing Integration** - Includes testing standards and generates test ideas
-- **Status Tracking** - Updates story status and maintains context references
+- **Epic Spine Reuse** – Loads the per-epic context once (docs, constraints, tests, deps) and blocks if it is stale
+- **Automated Context Discovery** – Adds story-specific documentation, code touchpoints, and constraints
+- **XML Output Format** – Structured context optimized for LLM consumption
+- **Dependency Detection** – Identifies frameworks, packages, and technical dependencies
+- **Interface Mapping** – Locates existing APIs and interfaces to reuse
+- **Testing Integration** – Includes shared testing standards and generates story-specific test ideas
+- **Status Tracking** – Updates story status and maintains context references
 
 ## Usage
 
@@ -58,40 +59,25 @@ story-context/
 - **Template Initialization**: Creates initial XML context structure
 - **User Story Extraction**: Parses "As a... I want... So that..." components
 
-### Phase 2: Documentation Discovery (Step 3)
+### Phase 2: Epic Spine Verification (Step 3)
 
-- **Keyword Analysis**: Identifies relevant terms from story content
-- **Document Scanning**: Searches docs and module documentation
-- **Authority Prioritization**: Prefers PRDs, architecture docs, and specs
-- **Context Extraction**: Captures relevant sections with snippets
+- **Epic Context Load**: Ensures `epic-context-{epic}.xml` exists; auto-builds if missing
+- **Staleness Check**: Re-hashes source docs and blocks until the spine is refreshed
+- **Coverage Update**: Marks the current story as consulted in the epic checklist
+- **Shared Data Seed**: Captures shared docs, constraints, testing standards, dependencies, and code baselines for reuse
 
-### Phase 3: Code Analysis (Step 4)
+### Phase 3: Story-Specific Discovery (Steps 4-7)
 
-- **Symbol Search**: Finds relevant modules, functions, and components
-- **Interface Identification**: Locates existing APIs and interfaces
-- **Constraint Extraction**: Identifies development patterns and requirements
-- **Reuse Opportunities**: Highlights existing code to leverage
+- **Documentation Append**: Adds story-unique doc snippets on top of the shared references
+- **Code & Interfaces**: Identifies specific modules, functions, and APIs to touch while reusing shared baselines
+- **Dependency Merge**: Extends package/tooling list only with story-required additions
+- **Testing Enrichment**: Augments shared standards with AC-specific test ideas and locations
 
-### Phase 4: Dependency Analysis (Step 5)
+### Phase 4: Validation and Updates (Steps 8-9)
 
-- **Manifest Detection**: Scans for package.json, requirements.txt, go.mod, etc.
-- **Framework Identification**: Identifies Unity, Node.js, Python, Go ecosystems
-- **Version Tracking**: Captures dependency versions where available
-- **Configuration Discovery**: Finds relevant project configurations
-
-### Phase 5: Testing Context (Step 6)
-
-- **Standards Extraction**: Identifies testing frameworks and patterns
-- **Location Mapping**: Documents where tests should be placed
-- **Test Ideas**: Generates initial test concepts for acceptance criteria
-- **Framework Integration**: Links to existing test infrastructure
-
-### Phase 6: Validation and Updates (Steps 7-8)
-
-- **XML Validation**: Ensures proper structure and completeness
-- **Status Updates**: Changes story status from Draft to ContextReadyDraft
-- **Reference Tracking**: Adds context file reference to story document
-- **Quality Assurance**: Validates against workflow checklist
+- **XML Validation**: Ensures structure and checklist compliance
+- **Story Updates**: Changes status to `ContextReadyDraft` and appends context reference
+- **Workflow Status**: Updates `bmm-workflow-status.md` (when present) with context completion details
 
 ## Output
 

@@ -27,6 +27,11 @@ variables:
   tech_spec_search_dir: "{project-root}/docs"
   tech_spec_glob_template: "tech-spec-epic-{{epic_id}}*.md"
   non_interactive: true
+  epic_context_dir: "{config_source}:dev_story_location"
+  epic_context_workflow: "{project-root}/bmad/bmm/workflows/4-implementation/epic-context/workflow.yaml"
+  auto_refresh_epic_context: true
+  block_until_fresh: true
+  epic_context_lock_timeout_seconds: 120
 
 # Output configuration
 default_output_file: "{story_dir}/story-context-{{epic_id}}.{{story_id}}.xml"
@@ -34,5 +39,17 @@ default_output_file: "{story_dir}/story-context-{{epic_id}}.{{story_id}}.xml"
 # Recommended inputs
 recommended_inputs:
   - story_markdown: "Path to a story markdown file to build context for"
+
+required_tools:
+  - list_files
+  - file_info
+  - read_file
+  - write_file
+  - create_directory
+  - glob
+  - search_repo
+  - parse_markdown
+  - parse_xml
+  - hash_file
 
 web_bundle: false
